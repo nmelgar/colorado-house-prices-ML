@@ -14,11 +14,10 @@ Colorado gave you home sales data for the city of Denver from 2013 on which to t
 
 
 ## Data
-[Dwellings_Denver](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_denver/dwellings_denver.csv)
-[Dwellings_ML](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_ml/dwellings_ml.csv)
-[Dwellings_Neighborhoods_ML](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_neighborhoods_ml/dwellings_neighborhoods_ml.csv)
-[Data Description](https://github.com/byuidatascience/data4dwellings/blob/master/data.md)
-[read more about this ban](https://www.asbestos.com/mesothelioma-lawyer/legislation/ban/)
+[Dwellings_Denver](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_denver/dwellings_denver.csv) </br>
+[Dwellings_ML](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_ml/dwellings_ml.csv) </br>
+[Dwellings_Neighborhoods_ML](https://github.com/byuidatascience/data4dwellings/raw/master/data-raw/dwellings_neighborhoods_ml/dwellings_neighborhoods_ml.csv) </br>
+[Data Description](https://github.com/byuidatascience/data4dwellings/blob/master/data.md) </br>
 
 ## Questions and Tasks
 <hr>
