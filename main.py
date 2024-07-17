@@ -93,7 +93,53 @@ price_per_year_chart.show()
 #     Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.
 #     Your goal is to reach or exceed 90% accuracy. Explain your final model choice
 #     (algorithm, tuning parameters, etc) and describe what other models you tried.
+# Select features and target
+features = [
+    "livearea",
+    "finbsmnt",
+    "basement",
+    "totunits",
+    "stories",
+    "nocars",
+    "numbdrm",
+    "numbaths",
+    "sprice",
+]
+X = data_ml[features]
+y = data_ml["before1980"]
 
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Build a Random Forest Classifier
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+# Print classification report
+print(classification_report(y_test, y_pred))
+
+# Plot confusion matrix
+plot_confusion_matrix(
+    model,
+    X_test_scaled,
+    y_test,
+    display_labels=["Post-1980", "Pre-1980"],
+    cmap=plt.cm.Blues,
+)
+plt.title("Confusion Matrix")
+plt.show()
 # GRAND QUESTION 3
 #     Justify your classification model by discussing the most important features selected by your model.
 #     This discussion should include a feature importance chart and a description of the features.
