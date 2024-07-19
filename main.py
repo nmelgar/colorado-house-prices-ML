@@ -7,17 +7,21 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, plot_confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report
+
 
 # %%
 # data description
 # https://github.com/byuidatascience/data4dwellings/blob/master/data.md
 # this data is ml ready
-# https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv
-data_ml = pd.read_csv("data/dwellings_ml.csv")
+data_url = "https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv"
+data_ml = pd.read_csv(data_url)
 
+# %%
+data_ml.columns
 
 # %%
 data_ml[data_ml.yrbuilt < 1980]
@@ -93,56 +97,92 @@ price_per_year_chart.show()
 #     Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.
 #     Your goal is to reach or exceed 90% accuracy. Explain your final model choice
 #     (algorithm, tuning parameters, etc) and describe what other models you tried.
-# Select features and target
-features = [
-    "livearea",
-    "finbsmnt",
-    "basement",
-    "totunits",
-    "stories",
-    "nocars",
-    "numbdrm",
-    "numbaths",
-    "sprice",
-]
-X = data_ml[features]
+
+# Define features (X) and target variable (y)
+X = data_ml.drop(
+    columns=[
+        "before1980",
+        "parcel",
+        "abstrprd",
+        "condition_Good",
+        "condition_AVG",
+        "stories",
+        "status_V",
+        "arcstyle_ONE-STORY",
+        "status_I",
+        "arcstyle_TWO-STORY",
+        "gartype_Att",
+        "gartype_Det",
+        "quality_C",
+        "quality_B",
+        "arcstyle_END UNIT",
+        "arcstyle_MIDDLE UNIT",
+        "arcstyle_ONE AND HALF-STORY",
+    ]
+)
 y = data_ml["before1980"]
 
-# Split the data
+# Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.3, random_state=42
 )
 
-# Standardize the features
+# Standardize features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Build a Random Forest Classifier
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train_scaled, y_train)
+# Train Logistic Regression model
+logreg_model = LogisticRegression(max_iter=1000)
+logreg_model.fit(X_train_scaled, y_train)
 
-# Predict and evaluate
-y_pred = model.predict(X_test_scaled)
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy:.2f}")
+# Train Random Forest Classifier model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train_scaled, y_train)
 
-# Print classification report
-print(classification_report(y_test, y_pred))
+# Evaluate models
+y_pred_logreg = logreg_model.predict(X_test_scaled)
+y_pred_rf = rf_model.predict(X_test_scaled)
 
-# Plot confusion matrix
-plot_confusion_matrix(
-    model,
-    X_test_scaled,
-    y_test,
-    display_labels=["Post-1980", "Pre-1980"],
-    cmap=plt.cm.Blues,
+accuracy_logreg = accuracy_score(y_test, y_pred_logreg)
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+
+print(f"Logistic Regression Accuracy: {accuracy_logreg:.2f}")
+print(f"Random Forest Accuracy: {accuracy_rf:.2f}")
+
+# Compare classification reports
+print("\nLogistic Regression Classification Report:")
+print(
+    classification_report(
+        y_test, y_pred_logreg, target_names=["After 1980", "Before 1980"]
+    )
 )
-plt.title("Confusion Matrix")
-plt.show()
+
+print("\nRandom Forest Classification Report:")
+print(
+    classification_report(y_test, y_pred_rf, target_names=["After 1980", "Before 1980"])
+)
+
 # GRAND QUESTION 3
 #     Justify your classification model by discussing the most important features selected by your model.
 #     This discussion should include a feature importance chart and a description of the features.
+# %%
+# get feature importance from the random forest model
+feature_importance = rf_model.feature_importances_
+
+importance_df = pd.DataFrame({"Feature": X.columns, "Importance": feature_importance})
+importance_df = importance_df.sort_values(by="Importance", ascending=False)
+importance_df = importance_df.head(10)
+
+# create chart to display feature importance from the model
+feature_importance_chart = px.bar(
+    importance_df,
+    x="Importance",
+    y="Feature",
+    title="Feature Importance from Random Forest Model",
+)
+
+feature_importance_chart.show()
 
 # GRAND QUESTION 4
 #     Describe the quality of your classification model using 2-3 different evaluation metrics.
