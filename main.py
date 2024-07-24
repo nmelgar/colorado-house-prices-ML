@@ -21,9 +21,6 @@ data_url = "https://raw.githubusercontent.com/byuidatascience/data4dwellings/mas
 data_ml = pd.read_csv(data_url)
 
 # %%
-data_ml.columns
-
-# %%
 data_ml[data_ml.yrbuilt < 1980]
 
 # GRAND QUESTION 1
@@ -98,49 +95,39 @@ price_per_year_chart.show()
 #     Your goal is to reach or exceed 90% accuracy. Explain your final model choice
 #     (algorithm, tuning parameters, etc) and describe what other models you tried.
 
-# Define features (X) and target variable (y)
+# %%
+# drop column to avoid overfitting
+data_ml.drop(columns=["yrbuilt"], inplace=True)
+
+# %%
+# define features (X) and target variable (y)
 X = data_ml.drop(
     columns=[
         "before1980",
         "parcel",
-        "abstrprd",
-        "condition_Good",
-        "condition_AVG",
-        "stories",
-        "status_V",
-        "arcstyle_ONE-STORY",
-        "status_I",
-        "arcstyle_TWO-STORY",
-        "gartype_Att",
-        "gartype_Det",
-        "quality_C",
-        "quality_B",
-        "arcstyle_END UNIT",
-        "arcstyle_MIDDLE UNIT",
-        "arcstyle_ONE AND HALF-STORY",
     ]
 )
 y = data_ml["before1980"]
 
-# Split data into training and testing sets
+# split data, training and testing
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
-# Standardize features
+# standardize features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Train Logistic Regression model
+# train logistic regression model
 logreg_model = LogisticRegression(max_iter=1000)
 logreg_model.fit(X_train_scaled, y_train)
 
-# Train Random Forest Classifier model
+# train random forest classifier model
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
-# Evaluate models
+# model evaluation
 y_pred_logreg = logreg_model.predict(X_test_scaled)
 y_pred_rf = rf_model.predict(X_test_scaled)
 
@@ -150,7 +137,7 @@ accuracy_rf = accuracy_score(y_test, y_pred_rf)
 print(f"Logistic Regression Accuracy: {accuracy_logreg:.2f}")
 print(f"Random Forest Accuracy: {accuracy_rf:.2f}")
 
-# Compare classification reports
+# classification reports comparisson
 print("\nLogistic Regression Classification Report:")
 print(
     classification_report(
