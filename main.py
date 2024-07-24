@@ -176,3 +176,10 @@ feature_importance_chart.show()
 #     You also need to explain how to interpret each of the evaluation metrics you use.
 
 # %%
+# _**Accuracy:** Measures the proportion of correctly classified instances. For Random Forest, it is 93%.High accuracy indicates the model performs well overall. The goal was to get at least 90% of accuracy, so had a higher accuracy than expected._
+
+# _**Precision:** Indicates the proportion of true positive predictions among all positive predictions. For “Before 1980”, it is 0.94. High precision means fewer false positives._
+
+# _**Recall:** Measures the proportion of true positive predictions among all actual positives. For “Before 1980”, it is 0.95. High recall means fewer false negatives._
+
+# _**F1-Score:**  Harmonic mean of precision and recall, providing a balance between the two. For “Before 1980”, it is 0.94. A high F1-score indicates a good balance between precision and recall._
